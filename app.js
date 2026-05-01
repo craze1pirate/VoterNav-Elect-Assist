@@ -62,6 +62,19 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Step 3: Calendar Reminder Button
+    const btnRemindMe = document.getElementById('btn-remind-me');
+    if (btnRemindMe) {
+        btnRemindMe.addEventListener('click', () => {
+            const title = '🗳️ Election Day - Time to Vote!';
+            const details = 'Remember to bring your valid Voter ID or recognized identification to the polling booth. Check VoterNav for your exact booth location!';
+            const dates = getNextTuesdayEventDates();
+            
+            const calendarUrl = generateGoogleCalendarLink(title, details, dates);
+            window.open(calendarUrl, '_blank');
+        });
+    }
+
 
     // --- Core Functions ---
 
@@ -179,5 +192,34 @@ document.addEventListener('DOMContentLoaded', () => {
             // Hide message if inputs are cleared or incomplete
             eligibilityMessage.classList.add('hidden');
         }
+    }
+
+    /**
+     * Generates a Google Calendar Event URL
+     */
+    function generateGoogleCalendarLink(title, details, dates) {
+        const baseUrl = 'https://calendar.google.com/calendar/render?action=TEMPLATE';
+        const encodedTitle = encodeURIComponent(title);
+        const encodedDetails = encodeURIComponent(details);
+        const encodedDates = encodeURIComponent(dates);
+        
+        return `${baseUrl}&text=${encodedTitle}&details=${encodedDetails}&dates=${encodedDates}`;
+    }
+
+    /**
+     * Gets the next upcoming Tuesday formatted as YYYYMMDDTHHMMSSZ
+     * using the requested 08:00 AM to 06:00 PM time block.
+     */
+    function getNextTuesdayEventDates() {
+        const date = new Date();
+        const daysUntilTuesday = (2 - date.getDay() + 7) % 7 || 7;
+        date.setDate(date.getDate() + daysUntilTuesday);
+        
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        
+        const dateStr = `${year}${month}${day}`;
+        return `${dateStr}T080000Z/${dateStr}T180000Z`;
     }
 });
