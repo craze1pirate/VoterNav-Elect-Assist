@@ -1,0 +1,35 @@
+/* 
+  Custom styles for VoterNav
+  Most styling is handled by Tailwind CSS classes in the HTML.
+  This file contains specific animations and utility classes.
+*/
+
+/* Smooth fade and slide animation for wizard steps */
+.wizard-step {
+    animation: slideFadeIn 0.4s ease-out forwards;
+}
+
+@keyframes slideFadeIn {
+    0% {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 
+  Utility class to ensure hidden elements are properly removed from the document flow.
+  Tailwind's 'hidden' class does this, but adding !important guarantees it overrides
+  any conflicting display properties during JavaScript toggles.
+*/
+.hidden {
+    display: none !important;
+}
+
+/* Custom styles for the timeline line */
+.border-l-4 {
+    border-left-width: 4px;
+}
