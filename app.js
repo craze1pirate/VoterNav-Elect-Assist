@@ -53,12 +53,65 @@ document.addEventListener('DOMContentLoaded', () => {
     ageInput.addEventListener('input', checkEligibility);
     citizenshipRadios.forEach(radio => radio.addEventListener('change', checkEligibility));
 
-    // Step 3: Find Booth Button (Empty function as requested)
+    // Step 3: Find Booth Button
     const btnFindBooth = document.getElementById('btn-find-booth');
-    if (btnFindBooth) {
-        btnFindBooth.addEventListener('click', () => {
-            // Function left empty for future implementation
-            console.log('Find booth clicked');
+    const zipcodeInput = document.getElementById('zipcode');
+    const pollingResultDiv = document.getElementById('polling-result');
+
+    if (btnFindBooth && zipcodeInput && pollingResultDiv) {
+        btnFindBooth.addEventListener('click', async () => {
+            const zipCode = zipcodeInput.value.trim();
+            
+            if (!zipCode) {
+                pollingResultDiv.innerHTML = `<div class="p-4 bg-yellow-50 text-yellow-800 rounded-lg border border-yellow-200 text-sm font-medium">Please enter a ZIP code.</div>`;
+                return;
+            }
+
+            // Set loading state
+            const originalBtnText = btnFindBooth.innerHTML;
+            btnFindBooth.innerHTML = 'Searching...';
+            btnFindBooth.disabled = true;
+            btnFindBooth.classList.add('opacity-75', 'cursor-not-allowed');
+            pollingResultDiv.innerHTML = '';
+
+            try {
+                const data = await fetchPollingLocation(zipCode);
+                
+                if (data && data.pollingLocations && data.pollingLocations.length > 0) {
+                    const location = data.pollingLocations[0];
+                    pollingResultDiv.innerHTML = `
+                        <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm transition-all duration-300">
+                            <div class="flex items-start gap-4">
+                                <div class="bg-indigo-100 p-3 rounded-full text-indigo-600 flex-shrink-0">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-gray-900 text-lg">${location.address.locationName}</h4>
+                                    <p class="text-gray-600 mt-1">${location.address.line1}<br>${location.address.city}</p>
+                                    <div class="mt-3 inline-flex items-center text-sm font-medium text-green-700 bg-green-50 px-3 py-1 rounded-full border border-green-200">
+                                        <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                        Hours: ${location.pollingHours}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    pollingResultDiv.innerHTML = `
+                        <div class="p-4 bg-red-50 text-red-800 rounded-lg border border-red-200 text-sm font-medium flex items-center">
+                            <svg class="w-5 h-5 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path></svg>
+                            No polling location found for this ZIP. Please try 12345 for the demo.
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                pollingResultDiv.innerHTML = `<div class="p-4 bg-red-50 text-red-800 rounded-lg border border-red-200 text-sm font-medium">An error occurred while searching.</div>`;
+            } finally {
+                // Reset loading state
+                btnFindBooth.innerHTML = originalBtnText;
+                btnFindBooth.disabled = false;
+                btnFindBooth.classList.remove('opacity-75', 'cursor-not-allowed');
+            }
         });
     }
 
@@ -221,5 +274,33 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const dateStr = `${year}${month}${day}`;
         return `${dateStr}T080000Z/${dateStr}T180000Z`;
+    }
+
+    /**
+     * Simulates fetching polling location data mimicking Google Civic Information API
+     */
+    async function fetchPollingLocation(zipCode) {
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                if (zipCode === '12345') {
+                    resolve({
+                        pollingLocations: [
+                            {
+                                address: {
+                                    locationName: "Central Community Center",
+                                    line1: "100 Main Street",
+                                    city: "Springfield, SP 12345"
+                                },
+                                pollingHours: "07:00 AM - 08:00 PM"
+                            }
+                        ]
+                    });
+                } else {
+                    resolve({
+                        pollingLocations: []
+                    });
+                }
+            }, 1200); // Simulate network delay
+        });
     }
 });
