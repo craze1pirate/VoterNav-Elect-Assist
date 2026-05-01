@@ -6,6 +6,25 @@
     <title>VoterNav - Your Smart Election Companion</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Configure Tailwind to use Inter by default -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
     <link rel="stylesheet" href="styles.css">
 </head>
 <body class="bg-gray-100 min-h-screen flex items-center justify-center p-4 font-sans text-gray-900">
@@ -162,5 +181,28 @@
     </main>
 
     <script src="app.js"></script>
+
+    <!-- Firebase SDK (Mock Initialization) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-analytics.js";
+
+        // Mock Firebase configuration for demonstration
+        const firebaseConfig = {
+            apiKey: "MOCK_API_KEY_FOR_DEMO",
+            authDomain: "voternav-mock.firebaseapp.com",
+            projectId: "voternav-mock",
+            storageBucket: "voternav-mock.appspot.com",
+            messagingSenderId: "123456789012",
+            appId: "1:123456789012:web:abcdef1234567890",
+            measurementId: "G-MOCKMEASURE"
+        };
+
+        // Initialize Firebase SDKs
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        
+        console.log("Firebase & Analytics successfully initialized with mock configuration.");
+    </script>
 </body>
 </html>

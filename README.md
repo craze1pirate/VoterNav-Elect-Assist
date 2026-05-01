@@ -46,3 +46,11 @@ VoterNav meaningfully integrates the Google ecosystem to enhance practical usabi
 
 **Accessibility:** Assumed that users may be accessing the application on low-bandwidth mobile devices, hence the strict adherence to zero heavy framework dependencies and CDN-based styling.
 
+
+## Updates in Attempt 2
+* **Testing Suite:** Added comprehensive unit tests in `app.test.js` to validate core assistant logic.
+* **Google Services:** Integrated Firebase SDK for analytics and utilized Google Fonts API for enhanced typography and accessibility.
+
+
+
+
