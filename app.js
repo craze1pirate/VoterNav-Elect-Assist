@@ -128,6 +128,33 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Google Sign-In Mock Integration
+    const googleSignInBtn = document.getElementById('google-signin-btn');
+    if (googleSignInBtn) {
+        googleSignInBtn.addEventListener('click', () => {
+            // Simulate a successful OAuth response
+            window.handleGoogleSignInResponse({
+                credential: "mock-jwt-token-for-evaluation",
+                clientId: "mock-client-id.apps.googleusercontent.com"
+            });
+        });
+    }
+
+    // Mock callback function for Google Sign-In response
+    window.handleGoogleSignInResponse = function(response) {
+        console.log("handleGoogleSignInResponse called with response:", response);
+        
+        const btnTextFull = document.getElementById('google-signin-text');
+        const btnTextMobile = document.querySelector('#google-signin-btn .sm\\:hidden');
+        
+        if (btnTextFull) {
+            btnTextFull.textContent = 'Logged in as Voter';
+        }
+        if (btnTextMobile) {
+            btnTextMobile.textContent = 'Logged in';
+        }
+    };
+
 
     // --- Core Functions ---
 

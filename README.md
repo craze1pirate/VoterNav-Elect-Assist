@@ -47,9 +47,11 @@ VoterNav meaningfully integrates the Google ecosystem to enhance practical usabi
 **Accessibility:** Assumed that users may be accessing the application on low-bandwidth mobile devices, hence the strict adherence to zero heavy framework dependencies and CDN-based styling.
 
 
-## Updates in Attempt 2
-* **Testing Suite:** Added comprehensive unit tests in `app.test.js` to validate core assistant logic.
+## Updates:
+* **1. Testing Suite:** Added comprehensive unit tests in `app.test.js` to validate core assistant logic.
 * **Google Services:** Integrated Firebase SDK for analytics and utilized Google Fonts API for enhanced typography and accessibility.
+
+* **2. Expanded Google Cloud Ecosystem:** Implemented Google Identity Services (OAuth) for secure voter authentication workflows and integrated Google Analytics (gtag.js) for robust application monitoring.
 
 
 
