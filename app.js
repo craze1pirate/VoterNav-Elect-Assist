@@ -1,3 +1,5 @@
+"use strict";
+
 /**
  * VoterNav - App Logic
  * Handles the 3-step wizard navigation, eligibility validation, and UI updates.
@@ -140,7 +142,12 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Mock callback function for Google Sign-In response
+    /**
+     * Handles the mock response from Google Sign-In.
+     * Updates the UI to reflect a logged-in state.
+     * @param {Object} response - The OAuth response object containing credentials.
+     * @returns {void}
+     */
     window.handleGoogleSignInResponse = function(response) {
         console.log("handleGoogleSignInResponse called with response:", response);
         
@@ -161,6 +168,7 @@ document.addEventListener('DOMContentLoaded', () => {
     /**
      * Updates the entire UI based on the `currentStep` state.
      * Manages section visibility, progress bar, indicators, and buttons.
+     * @returns {void}
      */
     function updateUI() {
         // 1. Update Step Content Visibility
@@ -225,6 +233,7 @@ document.addEventListener('DOMContentLoaded', () => {
     /**
      * Checks user eligibility based on Age and Citizenship inputs.
      * Displays a success or warning message dynamically.
+     * @returns {void}
      */
     function checkEligibility() {
         const ageStr = ageInput.value.trim();
@@ -275,7 +284,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /**
-     * Generates a Google Calendar Event URL
+     * Generates a Google Calendar Event URL with the provided details.
+     * @param {string} title - The title of the calendar event.
+     * @param {string} details - The description or details of the event.
+     * @param {string} dates - The start and end dates formatted for Google Calendar.
+     * @returns {string} The formatted Google Calendar URL.
      */
     function generateGoogleCalendarLink(title, details, dates) {
         const baseUrl = 'https://calendar.google.com/calendar/render?action=TEMPLATE';
@@ -289,6 +302,7 @@ document.addEventListener('DOMContentLoaded', () => {
     /**
      * Gets the next upcoming Tuesday formatted as YYYYMMDDTHHMMSSZ
      * using the requested 08:00 AM to 06:00 PM time block.
+     * @returns {string} The formatted date string for the calendar event.
      */
     function getNextTuesdayEventDates() {
         const date = new Date();
@@ -304,30 +318,55 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /**
-     * Simulates fetching polling location data mimicking Google Civic Information API
+     * Simulates fetching polling location data mimicking Google Civic Information API.
+     * Implements caching via localStorage to optimize efficiency.
+     * @param {string} zipCode - The ZIP code to search for polling locations.
+     * @returns {Promise<Object>} A promise resolving to an object containing polling location data.
      */
     async function fetchPollingLocation(zipCode) {
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                if (zipCode === '12345') {
-                    resolve({
-                        pollingLocations: [
-                            {
-                                address: {
-                                    locationName: "Central Community Center",
-                                    line1: "100 Main Street",
-                                    city: "Springfield, SP 12345"
-                                },
-                                pollingHours: "07:00 AM - 08:00 PM"
-                            }
-                        ]
-                    });
-                } else {
-                    resolve({
-                        pollingLocations: []
-                    });
-                }
-            }, 1200); // Simulate network delay
-        });
+        try {
+            // Check cache first
+            const cacheKey = `polling_location_${zipCode}`;
+            const cachedData = localStorage.getItem(cacheKey);
+            
+            if (cachedData) {
+                return JSON.parse(cachedData);
+            }
+            
+            // If not cached, fetch via Promise
+            const result = await new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    try {
+                        if (zipCode === '12345') {
+                            resolve({
+                                pollingLocations: [
+                                    {
+                                        address: {
+                                            locationName: "Central Community Center",
+                                            line1: "100 Main Street",
+                                            city: "Springfield, SP 12345"
+                                        },
+                                        pollingHours: "07:00 AM - 08:00 PM"
+                                    }
+                                ]
+                            });
+                        } else {
+                            resolve({
+                                pollingLocations: []
+                            });
+                        }
+                    } catch (err) {
+                        reject(err);
+                    }
+                }, 1200); // Simulate network delay
+            });
+            
+            // Save to cache
+            localStorage.setItem(cacheKey, JSON.stringify(result));
+            return result;
+        } catch (error) {
+            console.error('Error fetching polling location:', error);
+            throw error; // Rethrow to let the caller handle it
+        }
     }
 });

@@ -4,7 +4,7 @@
   "description": "VoterNav - Your Smart Election Companion",
   "main": "app.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest --coverage"
   },
   "devDependencies": {
     "jest": "^29.7.0"
